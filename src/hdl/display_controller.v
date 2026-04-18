@@ -5,6 +5,7 @@ module display_controller (
     input [4:0] hours,
     input [5:0] minutes,
     input display_mode, // 0: TIME, 1: FEED
+    input test_mode,   // 1: Show 1 2 3 4 for debugging
     output reg [6:0] seg,
     output reg [3:0] an
 );
@@ -40,13 +41,23 @@ module display_controller (
 
     reg [3:0] current_digit_val;
     always @(*) begin
-        case (digit_select)
-            2'b00: current_digit_val = m_units;
-            2'b01: current_digit_val = m_tens;
-            2'b10: current_digit_val = h_units;
-            2'b11: current_digit_val = h_tens;
-            default: current_digit_val = 0;
-        endcase
+        if (test_mode) begin
+            case (digit_select)
+                2'b00: current_digit_val = 4'd4;
+                2'b01: current_digit_val = 4'd3;
+                2'b10: current_digit_val = 4'd2;
+                2'b11: current_digit_val = 4'd1;
+                default: current_digit_val = 0;
+            endcase
+        end else begin
+            case (digit_select)
+                2'b00: current_digit_val = m_units;
+                2'b01: current_digit_val = m_tens;
+                2'b10: current_digit_val = h_units;
+                2'b11: current_digit_val = h_tens;
+                default: current_digit_val = 0;
+            endcase
+        end
     end
 
     // 7-segment segment decoder (Active LOW)

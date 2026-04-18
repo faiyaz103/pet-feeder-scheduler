@@ -3,14 +3,13 @@ module pet_feeder_top #(
     parameter DIV_1KHZ = 99_999
 )(
     input clk,
-    input reset,        // Map to btnD in XDC
     input btnC,         // Center button for manual override
-    input [3:0] sw,     // Schedule enable switches
+    input [15:0] sw,    // SW[15]=Reset, SW[14]=SelfTest, SW[3:0]=Schedule
     output [6:0] seg,
     output [3:0] an,
     output motor_en,
     output led_status,
-    output led_heartbeat // Pulses every second
+    output led_heartbeat // Toggles every second
 );
 
     wire tick_1hz, tick_1khz;
@@ -24,10 +23,11 @@ module pet_feeder_top #(
     wire reset_debounced, btnC_debounced;
     reg heartbeat_reg;
 
-    // Button Debouncers
+    // Button & Switch Debouncers
+    // Reset uses SW15 now
     button_debouncer db_reset (
         .clk(clk),
-        .btn_in(reset),
+        .btn_in(sw[15]),
         .btn_out(reset_debounced)
     );
 
@@ -72,7 +72,7 @@ module pet_feeder_top #(
         .hours(hours),
         .minutes(minutes),
         .seconds(seconds),
-        .sw(sw),
+        .sw(sw[3:0]), // Use lower switches for schedule
         .btnC(btnC_debounced),
         .clk(clk),
         .reset(reset_debounced),
@@ -103,6 +103,7 @@ module pet_feeder_top #(
         .hours(hours),
         .minutes(minutes),
         .display_mode(display_mode),
+        .test_mode(sw[14]), // SW14 for self-test
         .seg(seg),
         .an(an)
     );

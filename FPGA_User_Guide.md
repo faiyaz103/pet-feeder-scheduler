@@ -52,19 +52,15 @@ Once programmed, the system will start tracking time from `00:00:00`.
 ### Controls
 | Control | Function |
 | :--- | :--- |
-| **Switch 0** | Enable 08:00 AM Feeding slot |
-| **Switch 1** | Enable 12:00 PM Feeding slot |
-| **Switch 2** | Enable 05:00 PM (17:00) Feeding slot |
-| **Switch 3** | Enable 09:00 PM (21:00) Feeding slot |
+| **Switch 15** | **Hardware Reset**: UP (1) = Reset, DOWN (0) = Operation |
+| **Switch 14** | **Display Self-Test**: UP (1) = Force "1234" on display |
+| **Switch 0-3** | Enable/Disable Feeding Schedules (08:00, 12:00, 17:00, 21:00) |
 | **Button Center** | **Manual Override**: Immediate 10-second feeding |
-| **Button Upper** | **System Reset**: Clears time and FSM state |
 
 ### Indicators
-- **7-Segment Display**:
-    - **IDLE Mode**: Displays current time as `HH.MM`.
-    - **FEEDING Mode**: Displays the word **"FEED"**.
-- **LED 0**: Lights up when the system is in `FEEDING` mode.
-- **LED 15**: Acts as the `motor_en` signal (Simulates the feeder motor motor being active).
+- **LED 1 (V19)**: Heartbeat. Blinks every second when the clock is working AND **SW15 is DOWN**.
+- **LED 0 / LED 15**: ON during active feeding.
+- **7-Segment Display**: HH.MM clock or "FEED" pattern.
 
 ---
 
