@@ -25,7 +25,7 @@ module display_controller (
         case (digit_select)
             2'b00: an = 4'b1110; // Digit 0 (Rightmost)
             2'b01: an = 4'b1101;
-            2'b12: an = 4'b1011;
+            2'b10: an = 4'b1011;
             2'b11: an = 4'b0111; // Digit 3 (Leftmost)
             default: an = 4'b1111;
         endcase
