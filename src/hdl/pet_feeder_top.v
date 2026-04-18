@@ -3,13 +3,14 @@ module pet_feeder_top #(
     parameter DIV_1KHZ = 99_999
 )(
     input clk,
-    input reset,        // Map to btnU in XDC
+    input reset,        // Map to btnD in XDC
     input btnC,         // Center button for manual override
     input [3:0] sw,     // Schedule enable switches
     output [6:0] seg,
     output [3:0] an,
     output motor_en,
-    output led_status
+    output led_status,
+    output led_heartbeat // Pulses every second
 );
 
     wire tick_1hz, tick_1khz;
@@ -19,6 +20,31 @@ module pet_feeder_top #(
     wire state;
     wire [4:0] feed_timer;
     wire display_mode;
+    
+    wire reset_debounced, btnC_debounced;
+    reg heartbeat_reg;
+
+    // Button Debouncers
+    button_debouncer db_reset (
+        .clk(clk),
+        .btn_in(reset),
+        .btn_out(reset_debounced)
+    );
+
+    button_debouncer db_btnC (
+        .clk(clk),
+        .btn_in(btnC),
+        .btn_out(btnC_debounced)
+    );
+
+    always @(posedge clk) begin
+        if (reset_debounced)
+            heartbeat_reg <= 0;
+        else if (tick_1hz)
+            heartbeat_reg <= ~heartbeat_reg;
+    end
+
+    assign led_heartbeat = heartbeat_reg;
 
     // Clock Divider
     clock_divider #(
@@ -26,7 +52,7 @@ module pet_feeder_top #(
         .DIV_1KHZ(DIV_1KHZ)
     ) clk_div (
         .clk(clk),
-        .reset(reset),
+        .reset(reset_debounced),
         .tick_1hz(tick_1hz),
         .tick_1khz(tick_1khz)
     );
@@ -34,7 +60,7 @@ module pet_feeder_top #(
     // Timekeeping Unit
     timekeeping_unit timekeeper (
         .clk(clk),
-        .reset(reset),
+        .reset(reset_debounced),
         .tick_1hz(tick_1hz),
         .seconds(seconds),
         .minutes(minutes),
@@ -47,9 +73,9 @@ module pet_feeder_top #(
         .minutes(minutes),
         .seconds(seconds),
         .sw(sw),
-        .btnC(btnC),
+        .btnC(btnC_debounced),
         .clk(clk),
-        .reset(reset),
+        .reset(reset_debounced),
         .tick_1hz(tick_1hz),
         .state(state),
         .match_flag(match_flag),
@@ -60,7 +86,7 @@ module pet_feeder_top #(
     // FSM Control Unit
     fsm_control_unit fsm (
         .clk(clk),
-        .reset(reset),
+        .reset(reset_debounced),
         .match_flag(match_flag),
         .done_flag(done_flag),
         .state(state),
@@ -72,7 +98,7 @@ module pet_feeder_top #(
     // Display Controller
     display_controller display (
         .clk(clk),
-        .reset(reset),
+        .reset(reset_debounced),
         .tick_1khz(tick_1khz),
         .hours(hours),
         .minutes(minutes),

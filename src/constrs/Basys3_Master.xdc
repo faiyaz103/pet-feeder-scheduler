@@ -21,6 +21,8 @@ set_property PACKAGE_PIN W17 [get_ports {sw[3]}]
 ## LEDs
 set_property PACKAGE_PIN U16 [get_ports {led_status}]					
 	set_property IOSTANDARD LVCMOS33 [get_ports {led_status}]
+set_property PACKAGE_PIN V19 [get_ports {led_heartbeat}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {led_heartbeat}]
 set_property PACKAGE_PIN L1 [get_ports {motor_en}]					
 	set_property IOSTANDARD LVCMOS33 [get_ports {motor_en}]
 
@@ -52,7 +54,7 @@ set_property PACKAGE_PIN W4 [get_ports {an[3]}]
 ## Buttons
 set_property PACKAGE_PIN U18 [get_ports btnC]						
 	set_property IOSTANDARD LVCMOS33 [get_ports btnC]
-set_property PACKAGE_PIN T18 [get_ports reset]						
+set_property PACKAGE_PIN U17 [get_ports reset]						
 	set_property IOSTANDARD LVCMOS33 [get_ports reset]
 
 ## Configuration options, can be used for all designs
